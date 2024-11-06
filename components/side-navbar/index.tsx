@@ -36,7 +36,7 @@ export const SideNavBar = () => {
       <div className="h-screen max-h-screen overflow-hidden flex flex-col gap-4 justify-between px-2 py-2 pb-4 bg-slate-50 w-[200px]">
         <div className="flex flex-col gap-2">
           <Link href="/" className="text-lg font-semibold text-center">
-            Open Artifacts
+            Duet
           </Link>
 
           <div className="flex items-center justify-between gap-2">
@@ -91,7 +91,7 @@ export const SideNavBar = () => {
     <div className="h-screen max-h-screen flex flex-col gap-2 justify-between px-2 py-2 pb-4 items-center">
       <div className="flex flex-col gap-2">
         <Link href="/" className="text-lg font-semibold text-center">
-          OA
+          Duet
         </Link>
 
         <div className="flex items-center gap-2">

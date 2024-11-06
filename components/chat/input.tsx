@@ -109,7 +109,7 @@ export const ChatInput = ({
         </Button>
       )}
 
-      <div className="w-full flex flex-col gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-md border border-b-0 rounded-b-none shadow-md">
+      <div className="w-full flex flex-col gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-2xl border border-b-0 rounded-b-none shadow-md">
         {/* Attachment preview */}
         {attachments && (
           <div className="flex items-center gap-2 mb-2">
@@ -123,7 +123,7 @@ export const ChatInput = ({
           </div>
         )}
 
-        <div className="flex gap-2 items-start">
+    <div className="flex gap-2 items-start">
           {/* Main input textarea */}
           <Textarea
             ref={inputRef}
@@ -155,7 +155,7 @@ export const ChatInput = ({
           <Button
             variant="outline"
             size="icon"
-            className="w-8 h-8 bg-transparent"
+            className="w-10 h-8 bg-transparent rounded-2xl"
             onClick={handleFileUpload}
           >
             <PaperclipIcon className="w-4 h-4" />
@@ -169,7 +169,7 @@ export const ChatInput = ({
                   onClick={() => (recording ? onStopRecord() : onStartRecord())}
                   size="icon"
                   variant="outline"
-                  className="w-8 h-8 bg-transparent disabled:pointer-events-auto"
+                  className="w-10 h-8 bg-transparent disabled:pointer-events-auto rounded-2xl"
                 >
                   {recording ? (
                     <PauseIcon className="w-4 h-4" />
@@ -192,7 +192,7 @@ export const ChatInput = ({
           <Button
             onClick={isLoading ? stopGenerating : onSubmit}
             size="icon"
-            className="w-8 h-8"
+            className="w-10 h-8 rounded-2xl"
           >
             {isLoading ? (
               <CircleStopIcon className="w-4 h-4" />
