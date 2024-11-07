@@ -45,7 +45,7 @@ export const ChatPanel = ({ id }: Props) => {
       setFetchingMessages(true);
       const messages = await getChatMessages(supabase, chatId);
       setInitialMessages(
-        messages.map((message) => ({
+        messages.map((message: { id: number; role: string; text: string; attachments: unknown }) => ({
           id: String(message.id),
           role: message.role as Message["role"],
           content: message.text,

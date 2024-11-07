@@ -8,28 +8,43 @@ import { getChats } from "@/lib/db";
 import { useSupabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2Icon, SidebarIcon, SquarePenIcon } from "lucide-react";
-import Image from "next/image";
+//import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const SideNavBar = () => {
   const [open, setOpen] = useState(false);
-
   const params = useParams();
-
+  
   const { supabase, session } = useSupabase();
   const userId = session?.user.id;
+
+  // Log session and userId to debug authentication issues
+  console.log("Session:", session);
+  console.log("User ID:", userId);
 
   const {
     data: chats,
     error,
     isLoading,
   } = useQuery({
-    queryKey: ["chats"],
-    queryFn: async () => await getChats(supabase, userId),
+    queryKey: ["chats", userId],
+    queryFn: async () => {
+      if (!userId) {
+        console.warn("User ID is undefined, skipping chat fetch");
+        return [];
+      }
+      return await getChats(supabase, userId);
+    },
     enabled: !!userId,
   });
+
+  // Log chats and errors to debug data fetching issues
+  useEffect(() => {
+    if (chats) console.log("Fetched chats:", chats);
+    if (error) console.error("Error fetching chats:", error);
+  }, [chats, error]);
 
   if (open) {
     return (
@@ -54,7 +69,7 @@ export const SideNavBar = () => {
 
         <div className="flex flex-col flex-1 gap-2 overflow-hidden">
           <span className="font-medium">Chats</span>
-          {chats && (
+          {chats && chats.length > 0 ? (
             <div className="flex flex-col flex-1 gap-2 overflow-auto">
               {chats.map((item, index) => (
                 <ChatItem
@@ -65,6 +80,8 @@ export const SideNavBar = () => {
                 />
               ))}
             </div>
+          ) : (
+            <p className="text-gray-500">No chats available</p>
           )}
 
           {isLoading && <Loader2Icon className="w-4 h-4 animate-spin" />}
@@ -72,14 +89,14 @@ export const SideNavBar = () => {
         </div>
 
         <div className="flex flex-col gap-4 mt-2">
-          <a
+          {/* <a
             href="https://github.com/13point5/open-artifacts"
             target="_blank"
             className="text-black flex items-center gap-4 px-1"
           >
             <Image src="/github.svg" height="24" width="24" alt="github logo" />
             <span className="text-sm font-medium">GitHub Repo</span>
-          </a>
+          </a> */}
           <UserSettings showLabel />
           <UserButton expanded />
         </div>
@@ -108,13 +125,13 @@ export const SideNavBar = () => {
       </div>
 
       <div className="flex flex-col items-center gap-4">
-        <a
+        {/* <a
           href="https://github.com/13point5/open-artifacts"
           target="_blank"
           className="text-black"
         >
           <Image src="/github.svg" height="24" width="24" alt="github logo" />
-        </a>
+        </a> */}
         <UserSettings />
         <UserButton />
       </div>
