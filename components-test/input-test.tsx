@@ -1,3 +1,4 @@
+// components/ChatInput.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -76,7 +77,7 @@ export const ChatInput = ({ onSubmit }: ChatInputProps) => {
           onClick={() => window.scrollTo(0, document.body.scrollHeight)}
           variant="outline"
           size="icon"
-          className="rounded-full shadow-lg w-8 h-8"
+          className="rounded-full shadow-lg w-8 h-8 absolute right-4 bottom-20" // Moves the scroll button to the right
         >
           <ArrowDownIcon className="h-4 w-4" />
         </Button>
@@ -175,7 +176,6 @@ export const ChatInput = ({ onSubmit }: ChatInputProps) => {
             <SelectItem value="Duet">Duet</SelectItem>
           </SelectContent>
         </Select>
-        
       </div>
     </div>
   );

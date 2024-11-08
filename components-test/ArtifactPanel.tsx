@@ -30,7 +30,7 @@ const ArtifactPanel: React.FC<ArtifactPanelProps> = ({
   onCapture,
   generating,
 }) => {
-  const [mode, setMode] = useState<'code' | 'preview'>('code');
+  const [mode, setMode] = useState<'code' | 'preview'>('preview');
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 });
 
   const onCopy = () => {
@@ -56,20 +56,24 @@ const ArtifactPanel: React.FC<ArtifactPanelProps> = ({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="border-l border-r p-0 w-full flex-1 max-h-full overflow-hidden relative">
+      <CardContent className="border-l border-r p-4 w-full flex-1 max-h-full overflow-hidden relative">
         {type === 'application/abc' && mode === 'preview' && (
-          <div className="p-4">
+          <div className="w-full h-full">
             <ABCNotationRenderer abcNotation={content} />
           </div>
         )}
         {type === 'application/abc' && mode === 'code' && (
-          <CodeBlock language="abc" value={content} showHeader={false} className="h-full max-h-full overflow-auto" />
+          <div className="w-full h-full flex justify-center items-center p-4 bg-gray-100 rounded-lg">
+            <CodeBlock language="abc" value={content} showHeader={true} className="w-full h-full max-w-full overflow-auto" />
+          </div>
         )}
         {type === 'text/markdown' && (
           <Markdown text={content} className="h-full max-h-full overflow-auto py-4 px-4" />
         )}
         {type === 'application/code' && language && (
-          <CodeBlock language={language} value={content} showHeader={false} className="h-full max-h-full overflow-auto" />
+          <div className="w-full h-full flex justify-center items-center p-4 bg-gray-100 rounded-lg">
+            <CodeBlock language={language} value={content} showHeader={true} className="w-full h-full max-w-full overflow-auto" />
+          </div>
         )}
       </CardContent>
       <CardFooter className="bg-slate-50 border rounded-lg rounded-t-none py-2 px-4 flex items-center flex-row-reverse gap-4">

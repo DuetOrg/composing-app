@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { ChatInput } from "@/components-test/input-test";
 import { ChatMessageList } from "@/components-test/message-list-test";
-import abcjs from "abcjs"; // Ensure abcjs is installed
+import ArtifactPanel from "@/components-test/ArtifactPanel";
 
 type Message = {
   id: string;
@@ -11,23 +11,10 @@ type Message = {
   content: string;
 };
 
-// Component for rendering ABC Notation
-const ABCNotationRenderer = ({ abcNotation }: { abcNotation: string }) => {
-  const abcContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (abcContainerRef.current) {
-      abcjs.renderAbc(abcContainerRef.current, abcNotation);
-    }
-  }, [abcNotation]);
-
-  return <div ref={abcContainerRef} className="w-full h-full"></div>;
-};
-
 export const ChatPanel = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [showSideBySide, setShowSideBySide] = useState(false); // Controls side-by-side view visibility
-  const [abcNotation, setAbcNotation] = useState<string | null>(null); // Stores the ABC notation
+  const [abcNotation, setAbcNotation] = useState<string | null>(null);
+  const [showArtifactPanel, setShowArtifactPanel] = useState(false);
   const messagesRef = useRef<HTMLDivElement>(null);
 
   const handleSend = (userMessageContent: string) => {
@@ -57,14 +44,13 @@ This melody is composed in D minor, featuring a simple yet expressive progressio
 
     setMessages((prevMessages) => [...prevMessages, userMessage, assistantResponse]);
 
-    // Extract ABC notation from the assistant's response
     const abcMatch = assistantResponse.content.match(/```abc\n([\s\S]*?)\n```/);
     if (abcMatch) {
       setAbcNotation(abcMatch[1]);
-      setShowSideBySide(true);
+      setShowArtifactPanel(true);
     } else {
       setAbcNotation(null);
-      setShowSideBySide(false);
+      setShowArtifactPanel(false);
     }
   };
 
@@ -73,8 +59,8 @@ This melody is composed in D minor, featuring a simple yet expressive progressio
   }, [messages]);
 
   return (
-    <div className="relative flex w-full flex-1 overflow-x-hidden overflow-y-scroll pt-6">
-      <div className="relative mx-auto flex h-full w-full min-w-[400px] max-w-3xl flex-1 flex-col md:px-2">
+    <div className={`relative flex w-full h-full pt-6 ${showArtifactPanel ? "justify-between" : "justify-center"}`}>
+      <div className={`flex flex-col ${showArtifactPanel ? "w-3/5" : "w-full max-w-3xl"} min-w-[400px] h-full overflow-y-scroll`}>
         <ChatMessageList
           messages={messages}
           containerRef={messagesRef}
@@ -82,9 +68,18 @@ This melody is composed in D minor, featuring a simple yet expressive progressio
         />
         <ChatInput onSubmit={handleSend} />
       </div>
-      {showSideBySide && abcNotation && (
-        <div className="w-1/2 p-4">
-          <ABCNotationRenderer abcNotation={abcNotation} />
+
+      {showArtifactPanel && abcNotation && (
+        <div className="w-2/5 p-4 h-full overflow-y-auto">
+          <ArtifactPanel
+            type="application/abc"
+            title="Classical Melody in D Minor"
+            language="abc"
+            content={abcNotation}
+            onClose={() => setShowArtifactPanel(false)}
+            recording={false}
+            onCapture={() => {}}
+          />
         </div>
       )}
     </div>
