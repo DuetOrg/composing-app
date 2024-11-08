@@ -9,7 +9,9 @@ import {
   MessagePart as MessagePartType,
   parseMessage,
 } from "@/lib/utils";
-import { BotIcon, CodeIcon, Loader2Icon, UserIcon } from "lucide-react";
+import { CodeIcon, Loader2Icon, UserIcon } from "lucide-react";
+import Image from "next/image";
+import duetIcon from "/public/duet.png";  // Import the Duet icon
 
 const getDisplayNameFromRole = (
   role: ChatMessageRoles,
@@ -56,9 +58,28 @@ export const ChatMessage = ({
         }`}
       >
         {isUser ? (
-          <UserIcon size={16} className="text-white" />
+          <UserIcon size={20} className="text-white" />
         ) : (
-          <BotIcon size={16} className="text-gray-700" />
+          <div className="relative w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
+          <Image
+            src={duetIcon}
+            alt="Duet Icon"
+            width={20}
+            height={20}
+            className="object-cover"
+            style={{ transform: 'scale(1.5)' }} // Scales the image to 250%
+          />
+        </div>
+        
+        
+        
+        
+        
+        
+
+        
+        
+  // Replaced BotIcon with Duet icon
         )}
       </div>
 
@@ -81,8 +102,8 @@ export const ChatMessage = ({
         <div
           className={`rounded-2xl px-4 pb-2 flex flex-col items-center text-center ${
             isUser
-              ? "bg-slate-300 text-gray-900 rounded-tr-none"
-              : "bg-gray-200 text-gray-900 rounded-tl-none"
+              ? "bg-slate-300 text-gray-900 "
+              : "bg-gray-200 text-gray-900 "
           }`}
         > 
           {isUser ? (

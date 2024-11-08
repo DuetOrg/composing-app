@@ -213,6 +213,7 @@ export const ChatInput = ({
             <SelectItem value={Models.gpt4o}>GPT-4o</SelectItem>
             <SelectItem value={Models.gpt4turbo}>GPT-4 Turbo</SelectItem>
             <SelectItem value={Models.gpt35turbo}>GPT-3.5 Turbo</SelectItem>
+            <SelectItem value={Models.duet}>Duet</SelectItem> {/* Added duet model */}
           </SelectContent>
         </Select>
       </div>
