@@ -14,8 +14,8 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "Duet Music",
-  description: "Supercharge  Your Musical Workflow",
+  title: "Open Artifacts",
+  description: "Create and Share Artifacts with Claude and other models",
 };
 
 export default async function RootLayout({

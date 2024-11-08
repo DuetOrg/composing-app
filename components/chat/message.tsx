@@ -60,7 +60,7 @@ export const ChatMessage = ({
         {isUser ? (
           <UserIcon size={20} className="text-white" />
         ) : (
-          <div className="relative w-6 h-6 rounded-full  bg-gray-200 flex items-center justify-center">
+          <div className="relative w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
           <Image
             src={duetIcon}
             alt="Duet Icon"
@@ -102,8 +102,8 @@ export const ChatMessage = ({
         <div
           className={`rounded-2xl px-4 pb-2 flex flex-col items-center text-center ${
             isUser
-              ? "bg-slate-300 text-gray-900 rounded-tr-none"
-              : "bg-gray-200 text-gray-900 rounded-tl-none"
+              ? "bg-slate-300 text-gray-900 "
+              : "bg-gray-200 text-gray-900 "
           }`}
         > 
           {isUser ? (

@@ -104,7 +104,7 @@ export const ChatInput = ({ onSubmit }: ChatInputProps) => {
           {/* Main input textarea */}
           <Textarea
             ref={inputRef}
-            placeholder="Send a message."
+            placeholder="Message Duet"
             className="min-h-15 max-h-96 overflow-auto w-full bg-transparent border-none resize-none focus-within:outline-none"
             autoFocus
             spellCheck={false}
@@ -175,6 +175,7 @@ export const ChatInput = ({ onSubmit }: ChatInputProps) => {
             <SelectItem value="Duet">Duet</SelectItem>
           </SelectContent>
         </Select>
+        
       </div>
     </div>
   );
