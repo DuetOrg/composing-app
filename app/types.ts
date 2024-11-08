@@ -9,7 +9,9 @@ export enum Models {
   gpt4oMini = "gpt-4o-mini",
   gpt35turbo = "gpt-3.5-turbo",
   gpt4turbo = "gpt-4-turbo",
+  duet = "duet" // Added duet model
 }
+
 
 export type Chat = Database["public"]["Tables"]["chats"]["Row"];
 
