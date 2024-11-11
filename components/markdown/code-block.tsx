@@ -42,10 +42,11 @@ export const programmingLanguages: languageMap = {
   sql: ".sql",
   html: ".html",
   css: ".css",
+  abc: ".abc"
 };
 
 export const generateRandomString = (length: number, lowercase = false) => {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXY3456789"; // excluding similar looking characters like Z, 2, I, 1, O, 0
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXY3456789";
   let result = "";
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -59,7 +60,6 @@ const CodeBlock = ({
   showHeader = true,
   className = "",
 }: Props) => {
-  // * Copy to clipboard is used in multiple places, so using a custom hook
   const { isCopied, copyToClipboard } = useCopyToClipboard({
     timeout: 2000,
   });
@@ -78,7 +78,6 @@ const CodeBlock = ({
     const fileName = window.prompt("Enter file name" || "", suggestedFileName);
 
     if (!fileName) {
-      // user pressed cancel on prompt
       return;
     }
 
@@ -95,7 +94,7 @@ const CodeBlock = ({
   };
 
   return (
-    <div className={twMerge("codeblock relative w-full font-sans", className)}>
+    <div className={twMerge("codeblock relative w-150% max-w-full font-sans", className)}>
       {showHeader && (
         <div className="flex items-center justify-between rounded-t-lg bg-zinc-700 px-4 py-1">
           <span className="text-xs lowercase text-white">{language}</span>
@@ -130,8 +129,9 @@ const CodeBlock = ({
         showLineNumbers
         customStyle={{
           margin: 0,
-          width: "100%",
-          padding: "1.5rem 1rem",
+          width: "150%",
+          maxWidth: "150vw",
+          padding: "1.5rem 2rem",
           borderBottomLeftRadius: "8px",
           borderBottomRightRadius: "8px",
         }}
@@ -151,3 +151,4 @@ const CodeBlock = ({
 CodeBlock.displayName = "CodeBlock";
 
 export { CodeBlock };
+

@@ -83,7 +83,7 @@ export const ChatInput = ({ onSubmit }: ChatInputProps) => {
         </Button>
       )}
 
-      <div className="w-full flex flex-col gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-2xl border border-b-0 rounded-b-none shadow-md">
+      <div className=" gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-2xl border border-b-0 rounded-b-none shadow-md">
         {/* Attachment preview */}
         {attachments.length > 0 && (
           <div className="flex items-center gap-2 mb-2">

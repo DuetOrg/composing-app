@@ -129,7 +129,7 @@ export const ChatInput = ({
             ref={inputRef}
             tabIndex={0}
             onKeyDown={onKeyDown}
-            placeholder="Send a message."
+            placeholder="Message Duet."
             className="min-h-15 max-h-96 overflow-auto w-full bg-transparent border-none resize-none focus-within:outline-none"
             autoFocus
             spellCheck={false}
@@ -210,10 +210,9 @@ export const ChatInput = ({
           <SelectContent className="w-fit">
             <SelectItem value={Models.claude}>Claude Sonnet</SelectItem>
             <SelectItem value={Models.gpt4oMini}>GPT-4o Mini</SelectItem>
-            <SelectItem value={Models.gpt4o}>GPT-4o</SelectItem>
+            <SelectItem value={Models.gpt4o}>Duet</SelectItem>
             <SelectItem value={Models.gpt4turbo}>GPT-4 Turbo</SelectItem>
             <SelectItem value={Models.gpt35turbo}>GPT-3.5 Turbo</SelectItem>
-            <SelectItem value={Models.duet}>Duet</SelectItem> {/* Added duet model */}
           </SelectContent>
         </Select>
       </div>
