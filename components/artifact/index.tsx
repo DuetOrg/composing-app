@@ -1,102 +1,194 @@
-// components/ArtifactPanel.tsx
+// components/ChatPanel.tsx
 "use client";
 
-import { ReactArtifact } from "@/components/artifact/react";
-import { CodeBlock } from "@/components/markdown/code-block";
-import Markdown from "@/components/markdown/markdown";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
+import { ArtifactPanel } from "@/components/artifact";
+import { ChatInput, Props as ChatInputProps } from "@/components/chat/input";
+import { ChatMessageList } from "@/components/chat/message-list";
+import { Message, useChat } from "ai/react";
+import { getSettings } from "@/lib/userSettings";
+import { addMessage, createChat, getChatMessages } from "@/lib/db";
+import { Loader2Icon } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSupabase } from "@/lib/supabase";
+import { Chat, Models, Attachment } from "@/app/types";
 import { ArtifactMessagePartData } from "@/lib/utils";
-import { CheckIcon, ClipboardIcon, XIcon } from "lucide-react";
-import { useState } from "react";
-import { Props as ReactArtifactProps } from "@/components/artifact/react";
-import { HTMLArtifact } from "@/components/artifact/html";
-import ABCNotationRenderer from "@/components-test/ABCNotationRenderer";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor";
 
 type Props = {
-  onClose: () => void;
-  recording: boolean;
-  onCapture: ReactArtifactProps["onCapture"];
-} & ArtifactMessagePartData;
+  id: string | null;
+};
 
-export type ArtifactMode = "code" | "preview";
+export const ChatPanel = ({ id }: Props) => {
+  const settings = getSettings();
+  const { supabase, session } = useSupabase();
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
-export const ArtifactPanel = ({
-  type,
-  title,
-  language,
-  content,
-  onClose,
-  recording,
-  onCapture,
-  generating,
-}: Props) => {
-  const [mode, setMode] = useState<ArtifactMode>("preview");
+  const [chatId, setChatId] = useState(id);
+  const [initialMessages, setInitialMessages] = useState<Message[]>([]);
+  const [fetchingMessages, setFetchingMessages] = useState(false);
+  const [currentArtifact, setCurrentArtifact] = useState<ArtifactMessagePartData | null>(null);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [selectedArtifacts, setSelectedArtifacts] = useState<string[]>([]);
 
-  const { isCopied, copyToClipboard } = useCopyToClipboard({
-    timeout: 2000,
+  const fetchMessages = async () => {
+    if (chatId) {
+      setFetchingMessages(true);
+      const messages = await getChatMessages(supabase, chatId);
+      setInitialMessages(
+        messages.map((message: { id: number; role: string; text: string; attachments: unknown }) => ({
+          id: String(message.id),
+          role: message.role as Message["role"],
+          content: message.text,
+          experimental_attachments: (message.attachments as Attachment[]) || [],
+        }))
+      );
+      setFetchingMessages(false);
+    } else {
+      setInitialMessages([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const createChatMutation = useMutation({
+    mutationFn: async ({
+      title,
+    }: {
+      title: string;
+      firstMessage: Message;
+      secondMessage: Message;
+    }) => await createChat(supabase, title, session?.user.id),
+    onSuccess: async (newChat, { firstMessage, secondMessage }) => {
+      queryClient.setQueryData<Chat[]>(["chats"], (oldChats) => {
+        return [...(oldChats || []), newChat];
+      });
+      setChatId(newChat.id);
+      await addMessage(supabase, newChat.id, firstMessage);
+      await addMessage(supabase, newChat.id, secondMessage);
+      router.push(`/chat/${newChat.id}`);
+    },
   });
 
-  const onCopy = () => {
-    if (isCopied) return;
-    copyToClipboard(content);
+  const {
+    messages,
+    input,
+    setInput,
+    append,
+    stop: stopGenerating,
+    isLoading: generatingResponse,
+  } = useChat({
+    initialMessages,
+    onFinish: async (message) => {
+      if (chatId) {
+        await addMessage(supabase, chatId, message);
+      }
+    },
+    sendExtraMessageFields: true,
+  });
+
+  const { messagesRef, scrollRef, showScrollButton, handleManualScroll } = useScrollAnchor(messages);
+
+  useEffect(() => {
+    if (!chatId && messages.length === 2 && !generatingResponse) {
+      createChatMutation.mutate({
+        title: messages[0].content.slice(0, 100),
+        firstMessage: messages[0],
+        secondMessage: messages[1],
+      });
+    }
+  }, [chatId, messages, generatingResponse]);
+
+  const handleAddAttachment: ChatInputProps["onAddAttachment"] = (newAttachments) => {
+    setAttachments((prev) => [...prev, ...newAttachments]);
+  };
+
+  const handleRemoveAttachment: ChatInputProps["onRemoveAttachment"] = (attachment) => {
+    setAttachments((prev) => prev.filter((item) => item.url !== attachment.url));
+  };
+
+  const handleSend = async () => {
+    const query = input.trim();
+    if (!query) return;
+
+    const settings = getSettings();
+
+    if (settings.model === Models.claude && !settings.anthropicApiKey) {
+      toast.error("Please enter your Claude API Key");
+      return;
+    }
+
+    if (settings.model.startsWith("gpt") && !settings.openaiApiKey) {
+      toast.error("Please enter your OpenAI API Key");
+      return;
+    }
+
+    const messageAttachments = [
+      ...attachments.filter((item) => item.contentType?.startsWith("image")).map((item) => ({ url: item.url, contentType: item.contentType })),
+      ...selectedArtifacts.map((url) => ({ url })),
+    ];
+
+    append(
+      {
+        role: "user",
+        content: query,
+        experimental_attachments: messageAttachments,
+      },
+      {
+        body: {
+          model: settings.model,
+          apiKey: settings.model.startsWith("gpt") ? settings.openaiApiKey : settings.anthropicApiKey,
+        },
+      }
+    );
+
+    setInput("");
+
+    if (chatId) {
+      await addMessage(supabase, chatId, { role: "user", content: query }, attachments);
+    }
+
+    setAttachments([]);
+    setSelectedArtifacts([]);
   };
 
   return (
-    <Card className="w-full border-none rounded-none flex flex-col h-full max-h-full">
-      <CardHeader className="bg-slate-50 rounded-lg border rounded-b-none py-2 px-6 flex flex-row items-center gap-4 justify-between space-y-0">
-        <span className="font-semibold text-xl">{title || "Generating..."}</span>
+    <div className={`relative flex ${currentArtifact ? 'justify-between' : 'justify-center'} w-full h-full overflow-hidden pt-6`}>
+      <div className={`flex flex-col ${currentArtifact ? 'w-2/3' : 'w-full max-w-3xl'} min-w-[400px] h-full overflow-y-scroll`}>
+        {fetchingMessages && <Loader2Icon className="animate-spin mx-auto" />}
+        <ChatMessageList messages={messages} setCurrentArtifact={setCurrentArtifact} containerRef={messagesRef} />
+        <ChatInput
+          input={input}
+          setInput={setInput}
+          onSubmit={handleSend}
+          isLoading={generatingResponse}
+          attachments={attachments}
+          onAddAttachment={handleAddAttachment}
+          onRemoveAttachment={handleRemoveAttachment}
+          showScrollButton={showScrollButton}
+          handleManualScroll={handleManualScroll}
+          stopGenerating={stopGenerating}
+        />
+      </div>
 
-        <div className="flex gap-2 items-center">
-          <Tabs value={mode} onValueChange={(value) => setMode(value as ArtifactMode)}>
-            <TabsList className="bg-slate-200">
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          <Button onClick={onClose} size="icon" variant="ghost">
-            <XIcon className="w-4 h-4" />
-          </Button>
+      {currentArtifact && (
+        <div className="w-1/3 p-4 h-full overflow-y-auto">
+          <ArtifactPanel
+            title={currentArtifact.title}
+            id={currentArtifact.id}
+            type={currentArtifact.type}
+            generating={currentArtifact.generating}
+            content={currentArtifact.content}
+            language={currentArtifact.language}
+            onClose={() => setCurrentArtifact(null)}
+          />
         </div>
-      </CardHeader>
-
-      <CardContent
-        id="artifact-content"
-        className="border-l border-r p-4 w-full flex-1 max-h-full overflow-hidden relative"
-      >
-        <Tabs value={mode} onValueChange={(value) => setMode(value as ArtifactMode)}>
-          <TabsContent value="preview">
-            <div className="w-full h-full flex justify-center items-center p-6 bg-gray-100 rounded-lg">
-              <div className="max-w-3xl w-full">
-                <ABCNotationRenderer abcNotation={content} />
-              </div>
-            </div>
-          </TabsContent>
-          <TabsContent value="code">
-            <div className="w-full h-full flex justify-center items-center p-6 bg-gray-100 rounded-lg">
-              <div className="max-w-3xl w-full">
-                <CodeBlock
-                  language="abc"
-                  value={content}
-                  showHeader={true}
-                  className="overflow-auto"
-                />
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-
-      <CardFooter className="bg-slate-50 border rounded-lg rounded-t-none py-2 px-6 flex items-center flex-row-reverse gap-4">
-        <Button onClick={onCopy} size="icon" variant="outline" className="w-8 h-8">
-          {isCopied ? <CheckIcon className="w-4 h-4" /> : <ClipboardIcon className="w-4 h-4" />}
-        </Button>
-      </CardFooter>
-    </Card>
+      )}
+    </div>
   );
 };
-
-export default ArtifactPanel;
