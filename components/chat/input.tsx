@@ -129,7 +129,7 @@ export const ChatInput = ({
             ref={inputRef}
             tabIndex={0}
             onKeyDown={onKeyDown}
-            placeholder="Send a message."
+            placeholder="Message Duet."
             className="min-h-15 max-h-96 overflow-auto w-full bg-transparent border-none resize-none focus-within:outline-none"
             autoFocus
             spellCheck={false}

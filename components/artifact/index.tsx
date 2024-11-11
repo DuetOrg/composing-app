@@ -1,3 +1,4 @@
+// components/ArtifactPanel.tsx
 "use client";
 
 import { ReactArtifact } from "@/components/artifact/react";
@@ -22,8 +23,6 @@ type Props = {
 
 export type ArtifactMode = "code" | "preview";
 
-const artifactPreviewSupportedTypes = ["text/html", "application/react"];
-
 export const ArtifactPanel = ({
   type,
   title,
@@ -34,7 +33,7 @@ export const ArtifactPanel = ({
   onCapture,
   generating,
 }: Props) => {
-  const [mode, setMode] = useState<ArtifactMode>("preview"); // Set preview as the default mode
+  const [mode, setMode] = useState<ArtifactMode>("preview");
 
   const { isCopied, copyToClipboard } = useCopyToClipboard({
     timeout: 2000,
@@ -47,8 +46,8 @@ export const ArtifactPanel = ({
 
   return (
     <Card className="w-full border-none rounded-none flex flex-col h-full max-h-full">
-      <CardHeader className="bg-slate-50 rounded-lg border rounded-b-none py-2 px-4 flex flex-row items-center gap-4 justify-between space-y-0">
-        <span className="font-semibold">{title || "Generating..."}</span>
+      <CardHeader className="bg-slate-50 rounded-lg border rounded-b-none py-2 px-6 flex flex-row items-center gap-4 justify-between space-y-0">
+        <span className="font-semibold text-xl">{title || "Generating..."}</span>
 
         <div className="flex gap-2 items-center">
           <Tabs value={mode} onValueChange={(value) => setMode(value as ArtifactMode)}>
@@ -64,28 +63,35 @@ export const ArtifactPanel = ({
         </div>
       </CardHeader>
 
-      <CardContent id="artifact-content" className="border-l border-r p-0 w-full flex-1 max-h-full overflow-hidden relative">
+      <CardContent
+        id="artifact-content"
+        className="border-l border-r p-4 w-full flex-1 max-h-full overflow-hidden relative"
+      >
         <Tabs value={mode} onValueChange={(value) => setMode(value as ArtifactMode)}>
           <TabsContent value="preview">
-            <div className="w-full h-full flex justify-center items-center p-4 bg-gray-100 rounded-lg">
-              <ABCNotationRenderer abcNotation={content} /> {/* Render ABC notation as sheet music */}
+            <div className="w-full h-full flex justify-center items-center p-6 bg-gray-100 rounded-lg">
+              <div className="max-w-3xl w-full">
+                <ABCNotationRenderer abcNotation={content} />
+              </div>
             </div>
           </TabsContent>
           <TabsContent value="code">
-            <div className="w-full h-full flex justify-center items-center p-4 bg-gray-100 rounded-lg">
-              <CodeBlock language="abc" value={content} showHeader={true} className="w-full h-full max-w-full overflow-auto" />
+            <div className="w-full h-full flex justify-center items-center p-6 bg-gray-100 rounded-lg">
+              <div className="max-w-3xl w-full">
+                <CodeBlock
+                  language="abc"
+                  value={content}
+                  showHeader={true}
+                  className="overflow-auto"
+                />
+              </div>
             </div>
           </TabsContent>
         </Tabs>
       </CardContent>
 
-      <CardFooter className="bg-slate-50 border rounded-lg rounded-t-none py-2 px-4 flex items-center flex-row-reverse gap-4">
-        <Button
-          onClick={onCopy}
-          size="icon"
-          variant="outline"
-          className="w-8 h-8"
-        >
+      <CardFooter className="bg-slate-50 border rounded-lg rounded-t-none py-2 px-6 flex items-center flex-row-reverse gap-4">
+        <Button onClick={onCopy} size="icon" variant="outline" className="w-8 h-8">
           {isCopied ? <CheckIcon className="w-4 h-4" /> : <ClipboardIcon className="w-4 h-4" />}
         </Button>
       </CardFooter>

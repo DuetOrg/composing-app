@@ -15,7 +15,7 @@ const ABCNotationRenderer: React.FC<ABCNotationRendererProps> = ({ abcNotation }
     }
   }, [abcNotation]);
 
-  return <div ref={abcContainerRef} className="w-full h-full"></div>;
+  return <div ref={abcContainerRef} className="w-full h-full p-4 m-"></div>; // Add padding for a bit of extra space
 };
 
 export default ABCNotationRenderer;

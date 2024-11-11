@@ -224,11 +224,9 @@ export const ChatPanel = ({ id }: Props) => {
   };
 
   return (
-    <>
-      <div
-        className="relative flex w-full flex-1 overflow-x-hidden overflow-y-scroll pt-6"
-        ref={scrollRef}
-      >
+    <div className={`relative flex w-full h-full ${currentArtifact ? 'flex-row' : 'flex-col'} overflow-hidden pt-6`}>
+      {/* Chat and Input on the left */}
+      <div className={`flex flex-col h-full ${currentArtifact ? 'w-1/2' : 'w-full'} overflow-y-scroll`} ref={scrollRef}>
         <div className="relative mx-auto flex h-full w-full min-w-[400px] max-w-3xl flex-1 flex-col md:px-2">
           {fetchingMessages && <Loader2Icon className="animate-spin mx-auto" />}
 
@@ -256,21 +254,24 @@ export const ChatPanel = ({ id }: Props) => {
         </div>
       </div>
 
+      {/* Artifact Panel on the right */}
       {currentArtifact && (
-        <div className="w-full max-w-xl h-full max-h-full pt-6 pb-4">
-          <ArtifactPanel
-            title={currentArtifact.title}
-            id={currentArtifact.id}
-            type={currentArtifact.type}
-            generating={currentArtifact.generating}
-            content={currentArtifact.content}
-            language={currentArtifact.language}
-            onClose={() => setCurrentArtifact(null)}
-            recording={recording}
-            onCapture={handleCapture}
-          />
+        <div className="flex h-full w-1/2 overflow-y-auto">
+          <div className="w-full h-full max-h-full pt-6 pb-4">
+            <ArtifactPanel
+              title={currentArtifact.title}
+              id={currentArtifact.id}
+              type={currentArtifact.type}
+              generating={currentArtifact.generating}
+              content={currentArtifact.content}
+              language={currentArtifact.language}
+              onClose={() => setCurrentArtifact(null)}
+              recording={recording}
+              onCapture={handleCapture}
+            />
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

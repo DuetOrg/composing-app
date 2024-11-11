@@ -1,4 +1,4 @@
-import { ArtifactoSystemPrompt } from "@/app/api/chat/systemPrompt";
+import { DuetSystemPrompt } from "@/app/api/chat/systemPrompt";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { streamText, convertToCoreMessages, Message, ImagePart } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
         ],
       },
     ],
-    system: ArtifactoSystemPrompt,
+    system: DuetSystemPrompt,
     ...options,
   });
 
