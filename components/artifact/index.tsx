@@ -15,7 +15,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 import { ArtifactMessagePartData } from "@/lib/utils";
 import { CheckIcon, ClipboardIcon, PlayIcon, XIcon } from "lucide-react";
-import ABCNotationRenderer from "@/components-test/ABCNotationRenderer";
+import ABCNotationRenderer from "@/components/ui/ABCNotationRenderer";
 
 type Props = {
   onClose: () => void;
@@ -125,13 +125,13 @@ const ArtifactPanel: React.FC<Props> = ({
           <TabsContent value="preview">
             <div
               id="abc-notation"
-              className="w-full h-full flex flex-col justify-start items-stretch bg-gray-100 rounded-lg overflow-auto"
+              className="w-full h-full flex flex-col justify-start items-stretch  rounded-lg overflow-auto"
             >
               <ABCNotationRenderer abcNotation={savedContent} />
             </div>
           </TabsContent>
           <TabsContent value="editor">
-            <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gray-100 rounded-lg">
+            <div className="w-full h-full flex flex-col justify-center items-center p-6  rounded-lg">
               <div className="w-full">
                 <CodeBlock
                   language="abc"
