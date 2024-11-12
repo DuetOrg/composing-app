@@ -18,6 +18,8 @@ import { Props as ReactArtifactProps } from "@/components/artifact/react";
 import { useEffect, useState } from "react";
 import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor";
 import { useFakeWhisper } from "@/lib/hooks/use-fake-whisper";
+import { Props as ChatInputProps } from "@/components/chat/input";
+
 
 type Props = {
   id: string | null;
@@ -158,7 +160,7 @@ export const ChatPanel = ({ id }: Props) => {
   ) => {
     setAttachments((prev) => [...prev, ...newAttachments]);
   };
-
+  
   const handleRemoveAttachment: ChatInputProps["onRemoveAttachment"] = (
     attachment: Attachment
   ) => {
