@@ -1,7 +1,7 @@
 "use client";
 
-import { ArtifactPanel } from "@/components/artifact";
-import { ChatInput, Props as ChatInputProps } from "@/components/chat/input";
+import ArtifactPanel from "@/components/artifact";
+import { ChatInput } from "@/components/chat/input";
 import { ChatMessageList } from "@/components/chat/message-list";
 import { Message, useChat } from "ai/react";
 import { getSettings } from "@/lib/userSettings";
@@ -154,13 +154,13 @@ export const ChatPanel = ({ id }: Props) => {
 
   // Handle attachment management
   const handleAddAttachment: ChatInputProps["onAddAttachment"] = (
-    newAttachments
+    newAttachments: Attachment[]
   ) => {
     setAttachments((prev) => [...prev, ...newAttachments]);
   };
 
   const handleRemoveAttachment: ChatInputProps["onRemoveAttachment"] = (
-    attachment
+    attachment: Attachment
   ) => {
     setAttachments((prev) =>
       prev.filter((item) => item.url !== attachment.url)

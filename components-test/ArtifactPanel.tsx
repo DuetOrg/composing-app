@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, ClipboardIcon, XIcon } from 'lucide-react';
 import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard';
-import ABCNotationRenderer from '@/components-test/ABCNotationRenderer';
+import ABCNotationRenderer from '@/components/ui/ABCNotationRenderer';
 import { CodeBlock } from '@/components/markdown/code-block';
 import Markdown from '@/components/markdown/markdown';
 
