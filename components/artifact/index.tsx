@@ -40,7 +40,7 @@ const ArtifactPanel: React.FC<Props> = ({
   const [editableContent, setEditableContent] = useState(content);
   const [savedContent, setSavedContent] = useState(content);
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 });
-  const synthRef = useRef<ABCJS.synth.CreateSynth | null>(null);
+  const synthRef = useRef<any>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
