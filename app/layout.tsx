@@ -8,6 +8,8 @@ import { cookies } from "next/headers";
 import { SupabaseProvider } from "@/lib/supabase";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
+export const dynamic = 'force-dynamic';
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
